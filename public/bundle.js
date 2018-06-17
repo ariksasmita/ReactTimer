@@ -24922,18 +24922,13 @@
 	  return React.createElement(
 	    'div',
 	    null,
+	    React.createElement(Nav, null),
 	    React.createElement(
 	      'div',
-	      null,
+	      { className: 'row' },
 	      React.createElement(
 	        'div',
-	        null,
-	        React.createElement(Nav, null),
-	        React.createElement(
-	          'p',
-	          null,
-	          'Hei Hei hello'
-	        ),
+	        { className: 'column small-centered medium-6 large-4' },
 	        props.children
 	      )
 	    )
@@ -25045,14 +25040,29 @@
 	var React = __webpack_require__(8);
 	
 	var Clock = __webpack_require__(227);
+	var CountdownForm = __webpack_require__(234);
 	
 	var Countdown = React.createClass({
 	  displayName: 'Countdown',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      count: 0
+	    };
+	  },
+	  handleSetCountdown: function handleSetCountdown(seconds) {
+	    this.setState({
+	      count: seconds
+	    });
+	  },
 	  render: function render() {
+	    var count = this.state.count;
+	
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(Clock, { totalSeconds: 130 })
+	      React.createElement(Clock, { totalSeconds: count }),
+	      React.createElement(CountdownForm, { onSetCountdown: this.handleSetCountdown })
 	    );
 	  }
 	});
@@ -25495,6 +25505,46 @@
 	
 	// exports
 
+
+/***/ }),
+/* 234 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(8);
+	
+	var CountdownForm = React.createClass({
+	  displayName: 'CountdownForm',
+	
+	  onSubmit: function onSubmit(e) {
+	    e.preventDefault();
+	    var strSeconds = this.refs.seconds.value;
+	
+	    if (strSeconds.match(/^[0-9]*$/)) {
+	      this.refs.seconds.value = '';
+	      this.props.onSetCountdown(parseInt(strSeconds, 10));
+	    }
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { ref: 'form', onSubmit: this.onSubmit, className: 'countdown-form' },
+	        React.createElement('input', { type: 'text', ref: 'seconds', placeholder: 'Enter time in seconds' }),
+	        React.createElement(
+	          'button',
+	          { className: 'button expanded' },
+	          'Start'
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CountdownForm;
 
 /***/ })
 /******/ ]);
