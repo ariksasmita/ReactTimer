@@ -24995,7 +24995,7 @@
 	          React.createElement(
 	            'li',
 	            { className: 'menu-text' },
-	            'Created by ',
+	            'Created by',
 	            React.createElement(
 	              'a',
 	              { href: 'https://github.com/ariksasmita/ReactWeather', target: '_blank' },
@@ -25018,13 +25018,72 @@
 	
 	var React = __webpack_require__(8);
 	
+	var Clock = __webpack_require__(227);
+	var Controls = __webpack_require__(235);
+	
 	var Timer = React.createClass({
 	  displayName: 'Timer',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      count: 0,
+	      timerStatus: 'stopped'
+	    };
+	  },
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	    if (this.state.timerStatus !== prevState.timerStatus) {
+	      switch (this.state.timerStatus) {
+	        case 'started':
+	          this.handleStart();
+	          break;
+	        case 'stopped':
+	          this.setState({ count: 0 });
+	        case 'paused':
+	          clearInterval(this.timer);
+	          this.timer = undefined;
+	          break;
+	      }
+	    }
+	  },
+	  componentWillUmount: function componentWillUmount() {
+	    clearInterval(this.timer);
+	    this.timer = undefined;
+	  },
+	  handleStart: function handleStart() {
+	    var _this = this;
+	
+	    this.timer = setInterval(function () {
+	      var newCount = _this.state.count + 1;
+	      _this.setState({
+	        count: newCount
+	      });
+	    }, 1000);
+	  },
+	  stopTimer: function stopTimer() {
+	    this.setState({
+	      countdownStatus: 'stopped'
+	    });
+	  },
+	  handleStatusChange: function handleStatusChange(newStatus) {
+	    this.setState({
+	      timerStatus: newStatus
+	    });
+	  },
 	  render: function render() {
+	    var _state = this.state,
+	        count = _state.count,
+	        timerStatus = _state.timerStatus;
+	
 	    return React.createElement(
 	      'div',
 	      null,
-	      'Timer Component'
+	      React.createElement(
+	        'h1',
+	        { className: 'page-title' },
+	        'Timer'
+	      ),
+	      React.createElement(Clock, { totalSeconds: count }),
+	      React.createElement(Controls, { status: timerStatus, onStatusChange: this.handleStatusChange })
 	    );
 	  }
 	});
@@ -25111,7 +25170,7 @@
 	
 	    var renderControlArea = function renderControlArea() {
 	      if (countdownStatus !== 'stopped') {
-	        return React.createElement(Controls, { countdownStatus: countdownStatus, onStatusChange: _this2.handleStatusChange });
+	        return React.createElement(Controls, { status: countdownStatus, onStatusChange: _this2.handleStatusChange });
 	      }
 	      if (countdownStatus === 'stopped') {
 	        return React.createElement(CountdownForm, { onSetCountdown: _this2.handleSetCountdown });
@@ -25622,7 +25681,7 @@
 	  displayName: 'Controls',
 	
 	  propTypes: {
-	    countdownStatus: React.PropTypes.string.isRequired,
+	    status: React.PropTypes.string.isRequired,
 	    onStatusChange: React.PropTypes.func.isRequired
 	  },
 	  onStatusChange: function onStatusChange(newStatus) {
@@ -25635,16 +25694,16 @@
 	  render: function render() {
 	    var _this2 = this;
 	
-	    var countdownStatus = this.props.countdownStatus;
+	    var status = this.props.status;
 	
 	    var resnderStartStopButtons = function resnderStartStopButtons() {
-	      if (countdownStatus === 'started') {
+	      if (status === 'started') {
 	        return React.createElement(
 	          'button',
 	          { className: 'button secondary', onClick: _this2.onStatusChange('paused') },
 	          'Pause'
 	        );
-	      } else if (countdownStatus === 'paused') {
+	      } else {
 	        return React.createElement(
 	          'button',
 	          { className: 'button primary', onClick: _this2.onStatusChange('started') },
